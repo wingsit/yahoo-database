@@ -22,6 +22,8 @@ sample usage:
 >>> import ystockquote
 >>> print ystockquote.get_price('GOOG')
 529.46
+
+[Date, open, high, low, close, volume, adjclose]
 """
     
 class DataError(Exception):
@@ -46,7 +48,6 @@ class NetworkError(Exception):
 
     __str__ = __repr__
 
-
 def request1(ticker):
     url = 'http://finance.yahoo.com/d/cp?s=^%s' % (ticker)
     return urllib.urlopen(url).read().strip().strip('"')
@@ -66,29 +67,46 @@ def get_all(symbol):
     values = __request(symbol, 'l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7').split(',')
     data = {}
     data['ticker'] = symbol
-    data['price'] = values[0]
-    data['change'] = values[1]
-    data['volume'] = values[2]
-    data['avg_daily_volume'] = values[3]
+    try: data['price'] = float(values[0])
+    except:data['price'] = None
+    try: data['change'] = float(values[1])
+    except: data['change'] = None
+    try: data['volume'] = int(values[2])
+    except: data['volume'] = None
+    try: data['avg_daily_volume'] = float(values[3])
+    except: data['avg_daily_volume'] = None
     data['stock_exchange'] = values[4]
     data['market_cap'] = values[5]
-    data['book_value'] = values[6]
-    data['ebitda'] = values[7]
-    data['dividend_per_share'] = values[8]
-    data['dividend_yield'] = values[9]
-    data['earnings_per_share'] = values[10]
-    data['52_week_high'] = values[11]
-    data['52_week_low'] = values[12]
-    data['50day_moving_avg'] = values[13]
-    data['200day_moving_avg'] = values[14]
-    data['price_earnings_ratio'] = values[15]
-    data['price_earnings_growth_ratio'] = values[16]
-    data['price_sales_ratio'] = values[17]
-    data['price_book_ratio'] = values[18]
-    data['short_ratio'] = values[19]
+    try: data['book_value'] = float(values[6])
+    except: data['book_value'] = None
+    try: data['ebitda'] = float(values[7])
+    except:data['ebitda'] = None
+    try: data['dividend_per_share'] = float(values[8])
+    except: data['dividend_per_share'] = None
+    try: data['dividend_yield'] = float(values[9])
+    except : data['dividend_yield'] = None
+    try: data['earnings_per_share'] = float(values[10])
+    except: data['earnings_per_share'] = None
+    try: data['52_week_high'] = float(values[11])
+    except: data['52_week_high'] = None
+    try: data['52_week_low'] = float(values[12])
+    except: data['52_week_low'] = None
+    try: data['50_day_moving_avg'] = float(values[13])
+    except: data['50_day_moving_avg'] = None
+    try: data['200_day_moving_avg'] = float(values[14])
+    except : data['200_day_moving_avg'] = None
+    try: data['price_earnings_ratio'] = float(values[15])
+    except: data['price_earnings_ratio'] = None
+    try: data['price_earnings_growth_ratio'] = float(values[16])
+    except: data['price_earnings_growth_ratio'] = None
+    try: data['price_sales_ratio'] = float(values[17])
+    except: data['price_sales_ratio'] = None
+    try: data['price_book_ratio'] = float(values[18])
+    except: data['price_book_ratio'] = None
+    try: data['short_ratio'] = float(values[19])
+    except: data['short_ratio'] = None
     return data
-    
-    
+
 def get_price(symbol): 
     return __request(symbol, 'l1')
 
@@ -195,7 +213,7 @@ def get_historical_prices(symbol, start_date, end_date=date.today(), freq ='d'):
     try:
         for day in days[1:]:
             day =  day[:-2].split(',')
-            data[datetime(int(day[0][0:4]),int(day[0][5:7]),int(day[0][8:10]))] =(float(day[1]), float(day[2]), float(day[3]), float(day[4]), long(day[5]), float(day[6]))
+            data[date(int(day[0][0:4]),int(day[0][5:7]),int(day[0][8:10]))] =(float(day[1]), float(day[2]), float(day[3]), float(day[4]),  float(day[6]),long(day[5]))
         return data
     except IndexError:
         raise DataError('No data from Yahoo with ticker: %s'%symbol)
@@ -210,13 +228,12 @@ def get_historical_prices_list(symbol, start_date, end_date = date.today(), freq
     try:
         def mapper(quote):
             quote = quote[:-2].split(',')
-            quote[0] = datetime(int(quote[0][0:4]),int(quote[0][5:7]),int(quote[0][8:10]))
+            quote[0] = date(int(quote[0][0:4]),int(quote[0][5:7]),int(quote[0][8:10]))
             quote[1] = float(quote[1])
             quote[2] = float(quote[2])
             quote[3] = float(quote[3])
             quote[4] = float(quote[4])
-            quote[5] = long(quote[5])
-            quote[6] = float(quote[6])
+            quote[6], quote[5] = long(quote[5]),float(quote[6])
             return quote
         
         start_date = str(start_date)[0:11]
@@ -242,9 +259,10 @@ def get_historical_prices_list(symbol, start_date, end_date = date.today(), freq
         return data
 
 if __name__ =="__main__":
-    data = get_historical_prices("YHOO", datetime(2001,1,1), datetime(2001,5,1), freq = 'd')
-    data = get_historical_prices_list("YHOO", datetime(2001,1,1), datetime(2001,5,1), freq = 'd')
-    for i in data: print i
+    #data = get_historical_prices("YHOO", date(2001,1,1), date(2001,5,1), freq = 'd')
+#    data = get_historical_prices_list("YHOO", datetime(2001,1,1), datetime(2001,5,1), freq = 'd')
+#    for i in data: print i
 ##    data2 = get_historical_prices_list("YHOO", datetime(2001,1,1), datetime(2001,5,1), frequency = 'm')
 ##    for day in data2:
 ##        print day
+    print get_all("yhoo")
