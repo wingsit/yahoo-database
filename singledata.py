@@ -59,7 +59,6 @@ class StaticData(Entity):
 
 def time_series_fetcher(obj,ticker, begin, end = date.today()):
     for i in  getprice(ticker, begin, end):
-#        TimeSeriesData(ticker = ticker, date = i[0], open = i[1], high = i[2], low = i[3], close = i [4], adjclose = i[5], volume = i[6])
         obj.tsdata.append(TimeSeriesData( date = i[0], open = i[1], high = i[2], low = i[3], close = i [4], adjclose = i[5], volume = i[6]))
 
 
@@ -67,7 +66,6 @@ def time_series_fetcher(obj,ticker, begin, end = date.today()):
 def static_fetcher(obj, ticker):
     sdata = get_all(ticker)
     obj.staticdata.append(StaticData(
-#        ticker = sdata['ticker'],
         price = sdata['price'],
         change = sdata['change'],
         volume = sdata['volume'],
@@ -94,7 +92,7 @@ def static_fetcher(obj, ticker):
 if __name__ == "__main__":
     setup_all()
     create_all()
-    ticker = "yhoo"
+    ticker = ["yhoo", 'c', 'gs']
     begin = date(2005,1,1)
     yhoo = Ticker(ticker= ticker)
     time_series_fetcher(yhoo, ticker,begin)
