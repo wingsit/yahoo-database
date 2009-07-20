@@ -134,10 +134,8 @@ def get_market_cap(symbol):
 def get_book_value(symbol):
     return __request(symbol, 'b4')
 
-
 def get_ebitda(symbol): 
     return __request(symbol, 'j4')
-    
     
 def get_dividend_per_share(symbol):
     return __request(symbol, 'd')
@@ -145,8 +143,6 @@ def get_dividend_per_share(symbol):
 
 def get_dividend_yield(symbol): 
     return __request(symbol, 'y')
-    
-    
 def get_earnings_per_share(symbol): 
     return __request(symbol, 'e')
 
@@ -177,21 +173,17 @@ def get_price_earnings_growth_ratio(symbol):
 
 def get_price_sales_ratio(symbol): 
     return __request(symbol, 'p5')
-    
-    
+
 def get_price_book_ratio(symbol): 
     return __request(symbol, 'p6')
-       
-       
+
 def get_short_ratio(symbol): 
     return __request(symbol, 's7')
-    
-    
+
 def get_historical_prices(symbol, start_date, end_date=date.today(), freq ='d'):
     """
     Get historical prices for the given ticker symbol.
     Date format is 'YYYYMMDD'
-    
     Returns a nested a dictionary.
     """
     start_date = str(start_date)[0:11]
@@ -222,7 +214,6 @@ def get_historical_prices_list(symbol, start_date, end_date = date.today(), freq
     """
     Get historical prices for the given ticker symbol.
     Date format is 'YYYYMMDD'
-    
     Returns a nested list.
     """
     try:
@@ -235,7 +226,6 @@ def get_historical_prices_list(symbol, start_date, end_date = date.today(), freq
             quote[4] = float(quote[4])
             quote[6], quote[5] = long(quote[5]),float(quote[6])
             return quote
-        
         start_date = str(start_date)[0:11]
         end_date = str(end_date)[0:11]
         url = 'http://ichart.yahoo.com/table.csv?s=%s&' % symbol + \
@@ -251,18 +241,20 @@ def get_historical_prices_list(symbol, start_date, end_date = date.today(), freq
         data = [mapper(day) for day in days[1:]]
     except IOError:
         raise NetworkError('No data is delivered from Yahoo via internet')
-    except IndexError, ValueError:
+    except ValueError:
         raise DataError('No data from Yahoo with ticker: %s'%symbol)
     if assending:
         return reversed(data)
     else:
         return data
 
+
 if __name__ =="__main__":
     #data = get_historical_prices("YHOO", date(2001,1,1), date(2001,5,1), freq = 'd')
 #    data = get_historical_prices_list("YHOO", datetime(2001,1,1), datetime(2001,5,1), freq = 'd')
-#    for i in data: print i
-##    data2 = get_historical_prices_list("YHOO", datetime(2001,1,1), datetime(2001,5,1), frequency = 'm')
-##    for day in data2:
-##        print day
-    print get_all("yhoo")
+    #    for i in data: print i
+    data2 = get_historical_prices_list("YHOO", datetime(2001,1,1), datetime(2001,5,1), freq = 'm')
+    for day in data2:
+        print day
+#    print get_all("yhoo")
+
