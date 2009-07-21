@@ -4,29 +4,29 @@ from ystockquote import get_all
 from elixir import *
 from datetime import date
 
-metadata.bind = "sqlite:///stock.sqlite"
+metadata.bind = "sqlite:///stock.db"
 metadata.bind.echo = False
 
-class Ticker(Entity):
-    ticker = Field(String(7))
-    tsdata = OneToMany('TimeSeriesData')
-    staticdata = OneToMany('StaticData')
+# class Ticker(Entity):
+#     ticker = Field(String(7))
+#     tsdata = OneToMany('TimeSeriesData')
+#     staticdata = OneToMany('StaticData')
     
-    def __repr__(self):
-        return "%s %s %s "% (self.ticker, self.tsdata, self.staticdata)
+#     def __repr__(self):
+#         return "%s %s %s "% (self.ticker, self.tsdata, self.staticdata)
 
-class TimeSeriesData(Entity):
-    ticker = ManyToOne('Ticker', primary_key = True)
-    date = Field(Date, primary_key = True)
-    open = Field(Float)
-    high = Field(Float)
-    low = Field(Float)
-    close = Field(Float)
-    adjclose = Field(Float)
-    volume = Field(Integer)
+# class TimeSeriesData(Entity):
+#     ticker = ManyToOne('Ticker', primary_key = True)
+#     date = Field(Date, primary_key = True)
+#     open = Field(Float)
+#     high = Field(Float)
+#     low = Field(Float)
+#     close = Field(Float)
+#     adjclose = Field(Float)
+#     volume = Field(Integer)
     
-    def __repr__(self):
-        return "%s %s %.2f %.2f %.2f %0.2f %0.2f %.2d\n" % (self.ticker, self.date, self.open, self.high, self.low, self.close, self.adjclose, self.volume)
+#     def __repr__(self):
+#         return "%s %s %.2f %.2f %.2f %0.2f %0.2f %.2d\n" % (self.ticker, self.date, self.open, self.high, self.low, self.close, self.adjclose, self.volume)
 
 class StaticData(Entity):
     ticker = ManyToOne('Ticker', primary_key = True)
@@ -88,10 +88,12 @@ def static_fetcher(obj, ticker):
 if __name__ == "__main__":
     setup_all()
     create_all()
-    ticker = "yhoo"
+    tickers = ["yhoo", "GS", "c"]
     begin = date(2005,1,1)
-    yhoo = Ticker(ticker= ticker)
-    time_series_fetcher(yhoo, ticker,begin)
-    static_fetcher(yhoo,ticker)
-    session.commit()
-    print Ticker.query.first().ticker
+    for ticker in tickers:
+        yhoo = Ticker(ticker= ticker)
+        time_series_fetcher(yhoo, ticker,begin)
+        static_fetcher(yhoo,ticker)
+        session.commit()
+        print Ticker.query.first().ticker
+    
